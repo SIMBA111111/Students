@@ -1,0 +1,35 @@
+services:
+
+  backend:
+    container_name: "backend"
+    build: StudBack/
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    restart: always
+
+  frontend:
+    container_name: "frontend"
+    build: StudFront/
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+  db:
+    container_name: "db"
+    image: postgres:16.3-alpine3.20
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: admin
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+
+volumes:
+  db_data:
